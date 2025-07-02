@@ -1,6 +1,9 @@
 import { Text, View, StyleSheet } from 'react-native';
  import { Link } from 'expo-router'; 
- import Featured from '../../Components/Featured'
+ import Featured from '../../Components/Featured';
+ import Clender from './component/Clender';
+ import StasCardSection from './component/StasCardSection'
+ import ActivityListSection from './component/ActivityListSection'
 
 export default function Index() {
   return (
@@ -10,6 +13,9 @@ export default function Index() {
       <Link href="/Main/Home/product" style={styles.button}>
         Go to About screen
       </Link>
+      <Clender/>
+      <StasCardSection/>
+      <ActivityListSection/>
     </View>
   );
 }
@@ -17,7 +23,6 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#25292e',
     alignItems: 'center',
     justifyContent: 'center',
   },
