@@ -7,10 +7,10 @@ import { Text, View, StyleSheet } from 'react-native';
 
 export default function Index() {
   return (
-    <View style={styles.container}>
+    <View >
       <Featured/>
-      <Text style={styles.text}>Home screen</Text>
-      <Link href="/Main/Home/product" style={styles.button}>
+      <Text >Home screen</Text>
+      <Link href="/Main/Home/product" >
         Go to About screen
       </Link>
       <Clender/>
@@ -20,18 +20,4 @@ export default function Index() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  text: {
-    color: '#fff',
-  },
-  button: {
-    fontSize: 20,
-    textDecorationLine: 'underline',
-    color: '#fff',
-  },
-});
+

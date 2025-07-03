@@ -4,17 +4,23 @@ import ClenderBox from './ClenderBox';
 
 export default function Clender() {
   const store = [
-    { date: "07", day: "sun", month: "jan", year: "2004" },
-    { date: "08", day: "mon", month: "jan", year: "2004" },
-    { date: "09", day: "tue", month: "jan", year: "2004" },
-    { date: "10", day: "wed", month: "jan", year: "2004" }
+    { date: "07", day: "Sun", month: "Jan", year: "2004" },
+    { date: "08", day: "Mon", month: "Jan", year: "2004" },
+    { date: "09", day: "Tue", month: "Jan", year: "2004" },
+    { date: "10", day: "Wed", month: "Jan", year: "2004" },
+    { date: "09", day: "Tue", month: "Jan", year: "2004" },
+    { date: "10", day: "Wed", month: "Jan", year: "2004" }
   ];
 
   const [amu, setAmu] = useState(store);
 
   return (
-    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-      <View className="flex-row gap-3 px-4 py-2">
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      className="py-4"
+    >
+      <View className="flex-row gap-4 px-6">
         {amu.map((item, index) => (
           <ClenderBox key={index} data={item} />
         ))}

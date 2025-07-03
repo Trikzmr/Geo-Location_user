@@ -1,12 +1,12 @@
 import { View, Text } from 'react-native';
 
-
-export default function ClenderBox({data}) {
-  const {date,day}=data;
+export default function ClenderBox({ data }) {
+  const { date, day } = data;
   return (
-    <View className="w-16 h-16 bg-white rounded-lg shadow-md items-center justify-center">
-      <Text className="text-lg font-bold text-black">{date}</Text>
-      <Text className="text-sm text-gray-500">{day}</Text>
+    <View className="w-20 h-20 bg-white rounded-lg items-center justify-center p-2">
+      <Text className="text-2xl font-bold text-black">{date}</Text>
+      <Text className="text-base text-gray-500">{day}</Text>
     </View>
   );
 }
+   

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import StatCards from './StatCards';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function StasCardSection() {
   const store = [
-    { title: "Check In", time: "11:20 am", description: "On Time" },
-    { title: "Check Out", time: "11:40 am", description: "Go Time" },
-    { title: "Break Time", time: "12:20 am", description: "Avg Time 30 min" },
-    { title: "Aman", time: "31", description: "Working Days" },
-    { title: "Break Time", time: "12:20 am", description: "Avg Time 30 min" }
+    { icon: <Icon name="sign-in" size={30} color="#3B82F6"/>, title: "Check In", time: "11:20 am", description: "On Time" },
+    { icon: <Icon name="sign-out" size={30} color="#3B82F6"/>, title: "Check Out", time: "11:40 am", description: "Go Time" },
+    { icon: <Icon name="coffee" size={30} color="#3B82F6"/>, title: "Break Time", time: "12:20 am", description: "Avg Time 30 min" },
+    { icon: <Icon name="user" size={30} color="#3B82F6"/>, title: "Aman", time: "31", description: "Working Days" }
   ];
 
   const [data, setData] = useState(store);
@@ -26,9 +26,11 @@ export default function StasCardSection() {
       </Text>
 
       {chunked.map((row, rowIndex) => (
-        <View key={rowIndex} className="flex-row justify-between space-x-3">
+        <View key={rowIndex} className="flex-row">
           {row.map((item, index) => (
-            <StatCards key={index} datas={item} />
+            <View key={index} className="mb-3 mx-2 flex-1">
+              <StatCards datas={item} />
+            </View>
           ))}
         </View>
       ))}

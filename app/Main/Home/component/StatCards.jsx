@@ -1,13 +1,23 @@
 import { View, Text } from 'react-native';
 
 export default function StatCards({ datas }) {
-  const { title, time, description } = datas;
+  const { icon,title, time, description } = datas;
 
   return (
-    <View className="bg-white rounded-2xl shadow-md w-44 px-4 py-3 space-y-2">
-      <Text className="text-sm text-gray-600">{title}</Text>
-      <Text className="text-xl font-bold text-black">{time}</Text>
-      <Text className="text-xs text-gray-500">{description}</Text>
+    <View className="bg-white rounded-2xl w-48 h-36 px-3 py-3 shadow-sm">
+      {/* Icon and Title */}
+      <View className="flex-row items-center">
+        <View className="bg-blue-[30px] p-1 rounded-full mr-1.5">
+         {icon}
+        </View>
+        <Text className="text-sm text-gray-700 font-medium">{title}</Text>
+      </View>
+
+      {/* Time */}
+      <Text className="text-2xl font-bold text-black mt-1">{time}</Text>
+
+      {/* Description */}
+      <Text className="text-base font-medium text-black mt-1">{description}</Text>
     </View>
   );
 }
