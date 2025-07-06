@@ -15,16 +15,18 @@ export default function Clender() {
   const [amu, setAmu] = useState(store);
 
   return (
-    <ScrollView
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      className="py-4"
-    >
-      <View className="flex-row gap-4 px-6">
-        {amu.map((item, index) => (
-          <ClenderBox key={index} data={item} />
-        ))}
-      </View>
-    </ScrollView>
+    <View className="bg-white">
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        className="py-4"
+      >
+        <View className="flex-row gap-4 px-6">
+          {amu.map((item, index) => (
+            <ClenderBox key={index} data={item} />
+          ))}
+        </View>
+      </ScrollView>
+    </View>
   );
 }
