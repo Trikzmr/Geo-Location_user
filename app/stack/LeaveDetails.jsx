@@ -39,18 +39,7 @@ const LeaveDetails = () => {
         <Detail label="Approved By" value="Michael Mitc" />
       </View>
 
-      {/* Action Buttons */}
-      <View className="flex-row justify-between">
-        <TouchableOpacity className="flex-1 bg-red-400 py-4 rounded-lg items-center mr-2 flex-row justify-center space-x-2">
-          <Icon name="times-circle" size={22} color="white" />
-          <Text className="text-white text-xl font-bold ml-2">Reject</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity className="flex-1 bg-emerald-500 py-4 rounded-lg items-center ml-2 flex-row justify-center space-x-2">
-          <Icon name="check-circle" size={22} color="white" />
-          <Text className="text-white text-xl font-bold ml-2">Accept</Text>
-        </TouchableOpacity>
-      </View>
+      
     </View>
   );
 };
