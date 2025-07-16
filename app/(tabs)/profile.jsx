@@ -9,8 +9,6 @@ export default function Profile() {
   return (
     <ScrollView
       className="flex-1 bg-white px-6 pt-10"
-      showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ paddingBottom: 40 }}
     >
       <Profilescreen />
 

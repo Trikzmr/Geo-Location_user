@@ -1,13 +1,15 @@
-import React from 'react'
-import { View,Text} from 'react-native';
+import React from 'react';
+import { ScrollView, View, Text } from 'react-native';
 import HolidaySection from '../components/holiday/HolidaySection';
 
 const Holiday = () => {
   return (
-    <View className="pt-10">
-        <HolidaySection/>
-    </View>
-  )
-}
+    <ScrollView className="pt-10 bg-white">
+      <View>
+        <HolidaySection />
+      </View>
+    </ScrollView>
+  );
+};
 
-export default Holiday
+export default Holiday;

@@ -6,10 +6,27 @@ import {
   Pressable,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 
 const LeaveDetails = () => {
+  
   const router = useRouter();
+  const { data } = useLocalSearchParams(); // ✅ Get passed data
+  const user = JSON.parse(data); // ✅ Parse to object
+  const { title,
+     leaveType,
+     startingDate,
+     endingDate,
+     message,
+     requestedDate,
+     number,
+     approvalStatus}=user;
+
+     const formatDate = (dateStr) => {
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  return new Date(dateStr).toLocaleDateString(undefined, options);
+};
+
 
   return (
     <View className="flex-1 bg-white p-4">
@@ -17,7 +34,7 @@ const LeaveDetails = () => {
       {/* Top Section with Back Arrow */}
         <View className="relative items-center mb-6">
         <Pressable
-            onPress={() => router.replace('/(tabs)/cart')}
+            onPress={() => router.replace('/(tabs)/leave')}
             className="absolute left-0"
         >
             <Icon name="arrow-left" size={28} color="#000" />
@@ -29,14 +46,14 @@ const LeaveDetails = () => {
 
       {/* Content Section with extra space top and bottom */}
       <View className="mt-8 mb-6">
-        <Detail label="Title" value="Sick Leave" />
-        <Detail label="Leave Type" value="Medical Leave" />
-        <Detail label="Date" value="April 15, 2023 - April 18, 2023" />
-        <Detail label="Reason" value="I need to take a medical leave." />
-        <Detail label="Applied on" value="February 20, 2023" />
-        <Detail label="Contact Number" value="(603) 555-0123" />
+        <Detail label="Title" value={title} />
+        <Detail label="Leave Type" value={leaveType} />
+        <Detail label="Date" value={`${formatDate(startingDate)} - ${formatDate(endingDate)}`} />
+        <Detail label="Reason" value={message} />
+        <Detail label="Applied on" value={formatDate(requestedDate)} />
+        <Detail label="Contact Number" value={number} />
         <Detail label="Status" value="Pending" />
-        <Detail label="Approved By" value="Michael Mitc" />
+        <Detail label="Approved By" value={approvalStatus}/>
       </View>
 
       
