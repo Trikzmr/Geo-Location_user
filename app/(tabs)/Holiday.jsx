@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, View, Text } from 'react-native';
-import HolidaySection from '../components/holiday/HolidaySection';
+import HolidaySection from '../Components/holiday/HolidaySection';
+
 
 const Holiday = () => {
   return (
