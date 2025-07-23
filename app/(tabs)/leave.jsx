@@ -1,8 +1,9 @@
 import { ScrollView, Text } from 'react-native';
-import LeaveStatsSection from '../components/leave/LeaveStatsSection';
-import AllLeaveSection from '../components/leave/AllLeaveSection';
+import LeaveStatsSection from '../Components/leave/LeaveStatsSection';
+import AllLeaveSection from '../Components/leave/AllLeaveSection';
 
-export default function Cart() {
+
+export default function leave() {
   return (
     <ScrollView className="pt-10">
       <LeaveStatsSection/>

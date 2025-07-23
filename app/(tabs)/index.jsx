@@ -1,19 +1,23 @@
-import { View, Text, Button } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import Profile from '../components/home/Profile';
-import Clender from '../components/home/Clender';
-import StasCardSection from '../components/home/StasCardSection';
-import ActivityListSection from '../components/home/ActivityListSection';
+import Profile from '../Components/home/Profile';
+import Clender from '../Components/home/Clender';
+import StasCardSection from '../Components/home/StasCardSection';
+import ActivityListSection from '../Components/home/ActivityListSection';
+import LocationScreen from '../stack/LocationScreen';
 
 export default function Home() {
   const router = useRouter();
 
   return (
-    <View className="pt-10">
-      <Profile/>
-      <Clender/>
-      <StasCardSection/>
-      <ActivityListSection/>
-    </View>
+    <ScrollView className="pt-10 pb-12">
+      <View className="flex-1 px-4 space-y-4">
+        <Profile />
+        <Clender />
+        <StasCardSection />
+        <ActivityListSection />
+        <LocationScreen />
+      </View>
+    </ScrollView>
   );
 }

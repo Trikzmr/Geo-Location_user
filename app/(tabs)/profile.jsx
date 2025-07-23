@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
-import Profilescreen from '../components/profile/Profilescreen';
+import Profilescreen from '../Components/profile/Profilescreen';
 import { useRouter } from 'expo-router';
 
 export default function Profile() {
