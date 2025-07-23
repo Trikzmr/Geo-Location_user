@@ -20,7 +20,7 @@ export default function StasCardSection() {
   }
 
   return (
-    <View className="flex-col space-y-4 px-4 py-2">
+    <View className="flex-col space-y-4 px-4 py-2 mx-auto">
       <Text className="text-lg font-semibold text-gray-800 mb-2">
         Today Attendance
       </Text>

@@ -11,7 +11,7 @@ export default function Home() {
 
   return (
     <ScrollView className="pt-10 pb-12">
-      <View className="flex-1 px-4 space-y-4">
+      <View className="flex-1">
         <Profile />
         <Clender />
         <StasCardSection />
