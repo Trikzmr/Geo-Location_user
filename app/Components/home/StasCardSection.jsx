@@ -5,10 +5,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function StasCardSection() {
   const store = [
-    { icon: <Icon name="sign-in" size={30} color="#3B82F6"/>, title: "Check In", time: "11:20 am", description: "On Time" },
-    { icon: <Icon name="sign-out" size={30} color="#3B82F6"/>, title: "Check Out", time: "11:40 am", description: "Go Time" },
-    { icon: <Icon name="coffee" size={30} color="#3B82F6"/>, title: "Break Time", time: "12:20 am", description: "Avg Time 30 min" },
-    { icon: <Icon name="user" size={30} color="#3B82F6"/>, title: "Aman", time: "31", description: "Working Days" }
+    { icon: <Icon name="sign-in" size={20} color="#3B82F6"/>, title: "Check In", time: "11:20 am", description: "On Time" },
+    { icon: <Icon name="sign-out" size={20} color="#3B82F6"/>, title: "Check Out", time: "11:40 am", description: "Go Time" },
+    { icon: <Icon name="coffee" size={20} color="#3B82F6"/>, title: "Break Time", time: "12:20 am", description: "Avg Time 30 min" },
+    { icon: <Icon name="user" size={20} color="#3B82F6"/>, title: "Aman", time: "31", description: "Working Days" }
   ];
 
   const [data, setData] = useState(store);
@@ -20,7 +20,7 @@ export default function StasCardSection() {
   }
 
   return (
-    <View className="flex-col space-y-4 px-4 py-2 mx-auto">
+    <View className="flex-col space-y-4 px-0 py-2 mx-auto">
       <Text className="text-lg font-semibold text-gray-800 mb-2">
         Today Attendance
       </Text>

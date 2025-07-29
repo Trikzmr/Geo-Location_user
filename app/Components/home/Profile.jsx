@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 const Profile = () => {
   return (
-    <View className="flex-row items-center justify-between bg-white p-4 rounded-xl shadow-sm">
+    <View className="flex-row items-center justify-between bg-white p-4 shadow-sm">
       
       <View className="flex-row items-center">
         <Image

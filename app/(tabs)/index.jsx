@@ -10,14 +10,14 @@ export default function Home() {
   const router = useRouter();
 
   return (
-    <ScrollView className="pt-10 pb-12">
-      <View className="flex-1">
+    <View className="flex-1 pb-10">
+      <ScrollView className="pt-10 ">
         <Profile />
         <Clender />
         <StasCardSection />
         <ActivityListSection />
-        <LocationScreen />
-      </View>
-    </ScrollView>
+      </ScrollView>
+      <LocationScreen />
+    </View>
   );
 }

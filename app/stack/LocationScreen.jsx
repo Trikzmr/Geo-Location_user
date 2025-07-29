@@ -59,24 +59,21 @@ const LocationScreen = () => {
   };
 
   return (
-    <View className="flex-1 justify-center items-center bg-white px-4">
-      <Text className="text-xl font-semibold mb-6">Swipe to Check In</Text>
-
+    <View className="flex-1 justify-center items-center px-4">
+    
       {loading ? (
         <ActivityIndicator size="large" color="#2563eb" />
       ) : (
-        <Pressable onPress={handleCheckIn} className="w-[302px] h-[50px] rounded-full overflow-hidden">
-          <LinearGradient
+        <Pressable onPress={handleCheckIn} className="w-[100%] h-[60px] rounded-full overflow-hidden">
+         <LinearGradient
             colors={['#4facfe', '#00f2fe']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}
-            className="flex-row items-center justify-start w-full h-full px-3"
+            className="flex-row items-center justify-center w-full h-full"
           >
-            <View className="bg-white w-8 h-8 rounded-full justify-center items-center mr-3">
-              <Ionicons name="arrow-forward" size={18} color="#4facfe" />
-            </View>
-            <Text className="text-white text-base font-medium">Swipe to Check In</Text>
+            <Text className="text-white text-base font-medium">Press to Check In</Text>
           </LinearGradient>
+
         </Pressable>
       )}
     </View>
