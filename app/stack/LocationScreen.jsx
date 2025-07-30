@@ -3,7 +3,8 @@ import { View, Text, ActivityIndicator, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Ionicons } from '@expo/vector-icons';
+import { startLiveTracking } from './LocationTracker'; 
+
 
 const LocationScreen = () => {
   const [loading, setLoading] = useState(false);
@@ -25,8 +26,8 @@ const LocationScreen = () => {
       const locationName = locationData[0]?.name || 'Unknown';
 
       const now = new Date();
-      const date = now.toISOString();
-      const time = now.toISOString();
+      const date = now.toISOString().split('T')[0];
+      const time = now.toISOString().split(' ')[0];
       const month = now.toLocaleString('default', { month: 'long' });
       const year = now.getFullYear().toString();
 
@@ -51,6 +52,7 @@ const LocationScreen = () => {
       if (!response.ok) throw new Error(result.message || 'Check-in failed');
 
       alert('Check-in successful');
+      startLiveTracking(userName);
     } catch (err) {
       alert(err.message || 'Something went wrong');
     }
