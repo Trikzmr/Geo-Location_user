@@ -22,7 +22,7 @@ export default function ActivityListSection() {
   const [arr] = useState(store);
 
   return (
-    <View className="w-full px-4 py-3">
+    <View className="w-full px-4">
       {/* Header */}
       <View className="flex-row justify-between items-center mb-3">
         <Text className="text-lg font-semibold text-gray-800">Your Activity</Text>

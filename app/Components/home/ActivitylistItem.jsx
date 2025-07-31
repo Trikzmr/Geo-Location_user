@@ -5,7 +5,7 @@ const ActivitylistItem = ({ data }) => {
   const { icon, title, date, time } = data;
 
   return (
-    <View className="bg-white rounded-2xl shadow-md p-4 w-full self-center my-2 flex-row items-center justify-between">
+    <View className="bg-white rounded-2xl p-4 w-full self-center my-2 flex-row items-center justify-between">
       
       {/* Left: Icon + Title + Date */}
       <View className="flex-row items-center flex-1 space-x-3">
