@@ -15,6 +15,7 @@ export default function StasCardSection() {
       const userName = user.userName;
 
       const now = new Date();
+      const date = now.toISOString().split('T')[0];
       const month = now.toLocaleString('default', { month: 'long' });
       const year = now.getFullYear().toString();
 
@@ -22,9 +23,10 @@ export default function StasCardSection() {
         userName,
         month,
         year,
+        date
       };
 
-      const response = await fetch(`${baseurl}/api/getAttendanceByUsernameWithMonthAndYear`, {
+      const response = await fetch(`${baseurl}/api/getAttendanceByUsernameWithDayMonthAndYear`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -36,36 +38,52 @@ export default function StasCardSection() {
       const result = await response.json();
 
       if (!response.ok) throw new Error(result.message || 'User data is not found');
-
+      
       console.log(result);
+      const status=result.status;
+      const time=result.time;
 
+        const firstCheckInIndex = status.indexOf('check-in');
+        const lastCheckOutIndex = status.lastIndexOf('check-out');
 
-      // const newData = [
-      //   {
-      //     icon: <Icon name="sign-in" size={20} color="#3B82F6" />,
-      //     title: 'Check In',
-      //     time: todayRecord.checkInTime || 'N/A',
-      //     description: 'On Time',
-      //   },
-      //   {
-      //     icon: <Icon name="sign-out" size={20} color="#3B82F6" />,
-      //     title: 'Check Out',
-      //     time: todayRecord.checkOutTime || 'N/A',
-      //     description: 'Left',
-      //   },
-      //   {
-      //     icon: <Icon name="coffee" size={20} color="#3B82F6" />,
-      //     title: 'Break',
-      //     time: todayRecord.breakTime || 'N/A',
-      //     description: 'Break Time',
-      //   },
-      //   {
-      //     icon: <Icon name="user" size={20} color="#3B82F6" />,
-      //     title: 'Name',
-      //     time: userName,
-      //     description: 'Working',
-      //   },
-      // ];
+        function extractTime(timestamp) {
+          return new Date(timestamp).toTimeString().split(' ')[0];
+        }
+        
+        const firstCheckInTime = extractTime(time[firstCheckInIndex]);
+        const lastCheckOutTime = extractTime(time[lastCheckOutIndex]);
+
+        console.log(firstCheckInTime);
+        console.log(lastCheckOutTime);
+
+      const newData = [
+        {
+          icon: <Icon name="sign-in" size={20} color="#3B82F6" />,
+          title: 'Check In',
+          time: firstCheckInTime || 'N/A',
+          description: 'On Time',
+        },
+        {
+          icon: <Icon name="sign-out" size={20} color="#3B82F6" />,
+          title: 'Check Out',
+          time: lastCheckOutTime || 'N/A',
+          description: 'Go Time',
+        },
+        {
+          icon: <Icon name="coffee" size={20} color="#3B82F6" />,
+          title: 'Break',
+          time: "12:30:00" || 'N/A',
+          description: 'Break Time',
+        },
+        {
+          icon: <Icon name="user" size={20} color="#3B82F6" />,
+          title: userName,
+          time: "31",
+          description: 'Working',
+        },
+      ];
+
+      setData(newData);
 
     } catch (error) {
       console.error('API call failed:', error.message);
