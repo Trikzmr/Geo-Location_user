@@ -1,7 +1,25 @@
 import * as Location from 'expo-location';
-import { baseurl } from '../config/path'; 
+import { baseurl } from '../config/path';
 
-export const startLiveTracking = async (userName) => {
+
+export const trackcontinousLocation = async (userName) => {
+  try {
+    const attendanceResult = await markedAttendance(userName);
+    if (attendanceResult==0) {
+      
+      await startLiveTracking(userName);
+    }
+  } catch (err) {
+    console.error("❌ Error in tracking function:", err.message);
+  }
+};
+
+/**
+ * Checks if the user has marked attendance today
+ * @param {string} userName 
+ * @returns {Array | null} attendance result data
+ */
+const markedAttendance = async (userName) => {
   try {
     const now = new Date();
     const date = now.toISOString().split('T')[0];
@@ -15,7 +33,6 @@ export const startLiveTracking = async (userName) => {
       date,
     };
 
-    // Step 1: Check if user is checked-in
     const response = await fetch(`${baseurl}/api/getAttendanceByUsernameWithDayMonthAndYear`, {
       method: 'POST',
       credentials: 'include',
@@ -24,60 +41,58 @@ export const startLiveTracking = async (userName) => {
     });
 
     const result = await response.json();
-    if (!response.ok) throw new Error(result.message || 'Attendance not found');
+    console.log(result);
 
-    const status = result.status;
-    const lastStatus = status[status.length - 1];
-
-    if (lastStatus !== 'check-in') {
-      console.log('User is not checked in. Tracking will not start.');
-      return;
+    if (result.locationLogs.length > 0) {
+      return 0;
     }
 
-    // Step 2: Ask for location permission
+    return 1;
+  } catch (error) {
+    console.error("❌ Error in markedAttendance:", error.message);
+    return 1;
+  }
+};
+const startLiveTracking = async (userName) => {
+  try {
+    // Request permission
     const { status: permission } = await Location.requestForegroundPermissionsAsync();
-    if (permission !== 'granted') throw new Error('Location permission denied');
+    if (permission !== 'granted') {
+      throw new Error('Location permission denied');
+    }
 
-    console.log('📍 Starting live location tracking');
+    console.log('📍 Starting live location tracking...');
 
-    // Step 3: Start watching location
-    const subscription = await Location.watchPositionAsync(
-      {
-        accuracy: Location.Accuracy.High,
-        timeInterval: 60000, // every 1 minute
-        distanceInterval: 0,
-      },
-      async (location) => {
-        const { latitude, longitude } = location.coords;
-        const now = new Date();
+    // Get location
+    const location = await Location.getCurrentPositionAsync({
+      accuracy: Location.Accuracy.High,
+    });
 
-        const user = {
-          userName,
-          date: now.toISOString().split('T')[0],
-          time: now.toTimeString().split(' ')[0], // HH:MM:SS
-          locationLogs: [{ latitude, longitude }],
-        };
+    const { latitude, longitude } = location.coords;
+    const now = new Date();
 
-        try {
-          const res = await fetch('http://localhost:3005/api/liveTracking', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(user),
-          });
+    // Format user data
+    const user = {
+      userName,
+      date: now.toISOString().split('T')[0],
+      time: now.toTimeString().split(' ')[0], // HH:MM:SS
+      locationLogs: [{ latitude, longitude }],
+    };
 
-          const liveResult = await res.json();
-          if (!res.ok) throw new Error(liveResult.message || 'Tracking failed');
+    console.log("🕒 Time:", user.time);
 
-          console.log('✔️ Live location pushed');
-        } catch (err) {
-          console.error('Live tracking error:', err.message);
-        }
-      }
-    );
+    // Send to server
+    const res = await fetch(`${baseurl}/api/liveTracking`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(user),
+    });
 
-    return subscription; // You can stop it later using: subscription.remove()
+    const liveResult = await res.json();
+    if (!res.ok) throw new Error(liveResult.message || 'Tracking failed');
 
+    console.log('✔️ Live location pushed successfully');
   } catch (err) {
-    console.error('Live tracking setup failed:', err.message);
+    console.error('❌ Live tracking error:', err.message);
   }
 };
