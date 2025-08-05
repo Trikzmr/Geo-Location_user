@@ -63,7 +63,7 @@ const LocationScreen = () => {
 
       const now = new Date();
       const date = now.toISOString().split('T')[0];
-      const time = now.toISOString();
+      const time = now.toTimeString().split(' ')[0]; // "14:22:01"
       const month = now.toLocaleString('default', { month: 'long' });
       const year = now.getFullYear().toString();
 

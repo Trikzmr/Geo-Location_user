@@ -75,7 +75,6 @@ export default function StasCardSection() {
         body: JSON.stringify(bodys),
       });
       const texts = await workingDay.json();
-      console.log(texts.dayCalander);
       const workingDays = texts.dayCalander.filter(item => item.dayType === 1);
       console.log(workingDays.length);
 
@@ -88,16 +87,13 @@ export default function StasCardSection() {
       const status = result.status;
       const time = result.time;
 
-      const extractTime = (timestamp) =>
-        new Date(timestamp).toTimeString().split(' ')[0];
-
       const firstCheckInIndex = status.indexOf('check-in');
       const lastCheckOutIndex = status.lastIndexOf('check-out');
 
       const firstCheckInTime =
-        firstCheckInIndex !== -1 ? extractTime(time[firstCheckInIndex]) : 'N/A';
+        firstCheckInIndex !== -1 ? time[firstCheckInIndex] : 'N/A';
       const lastCheckOutTime =
-        lastCheckOutIndex !== -1 ? extractTime(time[lastCheckOutIndex]) : 'N/A';
+        lastCheckOutIndex !== -1 ? time[lastCheckOutIndex] : 'N/A';
 
       const newData = [
         {
