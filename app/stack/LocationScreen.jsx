@@ -10,7 +10,7 @@ const LocationScreen = () => {
   const [loading, setLoading] = useState(false);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
 
-  // ✅ Check attendance status on mount (refresh)
+  
   useEffect(() => {
     const checkAttendance = async () => {
       try {

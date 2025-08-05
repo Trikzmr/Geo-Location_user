@@ -6,7 +6,34 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { baseurl } from '../../config/path';
 
 export default function StasCardSection() {
-  const [data, setData] = useState([]);
+  const defaultData = [
+    {
+      icon: <Icon name="sign-in" size={20} color="#3B82F6" />,
+      title: 'Check In',
+      time: 'N/A',
+      description: 'On Time',
+    },
+    {
+      icon: <Icon name="sign-out" size={20} color="#3B82F6" />,
+      title: 'Check Out',
+      time: 'N/A',
+      description: 'Go Time',
+    },
+    {
+      icon: <Icon name="coffee" size={20} color="#3B82F6" />,
+      title: 'Break',
+      time: '12:30:00',
+      description: 'Break Time',
+    },
+    {
+      icon: <Icon name="user" size={20} color="#3B82F6" />,
+      title: 'User',
+      time: '31',
+      description: 'Working',
+    },
+  ];
+
+  const [data, setData] = useState(defaultData);
 
   const userData = async () => {
     try {
@@ -23,7 +50,7 @@ export default function StasCardSection() {
         userName,
         month,
         year,
-        date
+        date,
       };
 
       const response = await fetch(`${baseurl}/api/getAttendanceByUsernameWithDayMonthAndYear`, {
@@ -32,59 +59,74 @@ export default function StasCardSection() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(body), // ✅ FIXED
+        body: JSON.stringify(body),
       });
+      const currentYear = new Date().getFullYear();
+      const bodys={
+        year: currentYear,
+        month
+      }
+      const workingDay = await fetch(`${baseurl}/api/getCalenders`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bodys),
+      });
+      const texts = await workingDay.json();
+      console.log(texts.dayCalander);
+      const workingDays = texts.dayCalander.filter(item => item.dayType === 1);
+      console.log(workingDays.length);
 
       const result = await response.json();
 
-      if (!response.ok) throw new Error(result.message || 'User data is not found');
-      
-      console.log(result);
-      const status=result.status;
-      const time=result.time;
+      if (!response.ok) throw new Error(result.message || 'User data not found');
 
-        const firstCheckInIndex = status.indexOf('check-in');
-        const lastCheckOutIndex = status.lastIndexOf('check-out');
+      // console.log(result);
 
-        function extractTime(timestamp) {
-          return new Date(timestamp).toTimeString().split(' ')[0];
-        }
-        
-        const firstCheckInTime = extractTime(time[firstCheckInIndex]);
-        const lastCheckOutTime = extractTime(time[lastCheckOutIndex]);
+      const status = result.status;
+      const time = result.time;
 
-        console.log(firstCheckInTime);
-        console.log(lastCheckOutTime);
+      const extractTime = (timestamp) =>
+        new Date(timestamp).toTimeString().split(' ')[0];
+
+      const firstCheckInIndex = status.indexOf('check-in');
+      const lastCheckOutIndex = status.lastIndexOf('check-out');
+
+      const firstCheckInTime =
+        firstCheckInIndex !== -1 ? extractTime(time[firstCheckInIndex]) : 'N/A';
+      const lastCheckOutTime =
+        lastCheckOutIndex !== -1 ? extractTime(time[lastCheckOutIndex]) : 'N/A';
 
       const newData = [
         {
           icon: <Icon name="sign-in" size={20} color="#3B82F6" />,
           title: 'Check In',
-          time: firstCheckInTime || 'N/A',
+          time: firstCheckInTime,
           description: 'On Time',
         },
         {
           icon: <Icon name="sign-out" size={20} color="#3B82F6" />,
           title: 'Check Out',
-          time: lastCheckOutTime || 'N/A',
+          time: lastCheckOutTime,
           description: 'Go Time',
         },
         {
           icon: <Icon name="coffee" size={20} color="#3B82F6" />,
           title: 'Break',
-          time: "12:30:00" || 'N/A',
+          time: '12:30:00',
           description: 'Break Time',
         },
         {
           icon: <Icon name="user" size={20} color="#3B82F6" />,
           title: userName,
-          time: "31",
+          time: workingDays.length,
           description: 'Working',
         },
       ];
 
       setData(newData);
-
     } catch (error) {
       console.error('API call failed:', error.message);
       Alert.alert('Error', error.message || 'Could not connect to server.');
@@ -104,19 +146,15 @@ export default function StasCardSection() {
     <View className="px-4 pt-4">
       <Text className="text-lg font-semibold text-gray-800 mb-4">Today Attendance</Text>
 
-      {chunkedData.length === 0 ? (
-        <Text className="text-gray-500 text-center">No data available for today</Text>
-      ) : (
-        chunkedData.map((row, rowIndex) => (
-          <View key={rowIndex} className="flex-row justify-between mb-4">
-            {row.map((item, index) => (
-              <View key={index} className="w-[48%]">
-                <StatCards datas={item} />
-              </View>
-            ))}
-          </View>
-        ))
-      )}
+      {chunkedData.map((row, rowIndex) => (
+        <View key={rowIndex} className="flex-row justify-between mb-4">
+          {row.map((item, index) => (
+            <View key={index} className="w-[48%]">
+              <StatCards datas={item} />
+            </View>
+          ))}
+        </View>
+      ))}
     </View>
   );
 }

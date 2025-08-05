@@ -41,7 +41,7 @@ const markedAttendance = async (userName) => {
     });
 
     const result = await response.json();
-    console.log(result);
+    // console.log(result);
 
     if (result.locationLogs.length > 0) {
       return 0;
