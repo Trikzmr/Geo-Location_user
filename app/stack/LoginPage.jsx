@@ -1,18 +1,17 @@
-import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
+    Alert,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import baseurl from '../config/path';
 
 
 const LoginPage = () => {
@@ -31,7 +30,7 @@ const LoginPage = () => {
 
   try {
     const response = await fetch(
-      "http://localhost:3005/api/login",
+      "https://geo-location-based-attendence-tracking.onrender.com/api/login",
       {
         method: 'POST',
         credentials: 'include',
