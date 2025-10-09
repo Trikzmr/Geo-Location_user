@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { ScrollView, View, Text, Alert } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Alert, ScrollView, Text, View } from 'react-native';
 import HolidayItems from './HolidayItems';
 
 const HolidaySection = () => {
@@ -9,7 +9,7 @@ const HolidaySection = () => {
     try {
       const currentYear = new Date().getFullYear();
 
-      const response = await fetch('http://localhost:3005/api/getWeekend', {
+      const response = await fetch('https://geo-location-based-attendence-tracking.onrender.com/api/getWeekend', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

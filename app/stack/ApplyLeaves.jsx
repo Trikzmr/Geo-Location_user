@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Pressable,
-  ScrollView,
-  KeyboardAvoidingView,
-  Platform,
-  Alert,
+    Alert,
+    KeyboardAvoidingView,
+    Platform,
+    Pressable,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useRouter } from 'expo-router';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ApplyLeavs = () => {
   const router = useRouter();
@@ -45,7 +45,7 @@ const ApplyLeavs = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await fetch('http://localhost:3005/api/addLeaveRequest', {
+      const response = await fetch('https://geo-location-based-attendence-tracking.onrender.com/api/addLeaveRequest', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -82,25 +82,10 @@ const ApplyLeavs = () => {
           </Pressable>
           <Text className="text-2xl font-bold text-black">Apply Leave</Text>
         </View>
-
-        <Text className="text-base text-blue-500 mb-1">UserId</Text>
-        <TextInput
-          placeholder="User Id"
-           value={user.userId}
-          editable={false}
-          className="border border-blue-300 rounded-xl px-4 py-3 mb-4 text-lg text-black"
-        />
-        <Text className="text-base text-blue-500 mb-1">UserName</Text>
-        <TextInput
-          placeholder="username"
-           value={user.userName}
-          editable={false}
-          className="border border-blue-300 rounded-xl px-4 py-3 mb-4 text-lg text-black"
-        />
+        
         {/* Title */}
         <Text className="text-base text-blue-500 mb-1">Title</Text>
         <TextInput
-          placeholder="Title"
            value={user.title}
            onChangeText={(text) => setUser({ ...user, title: text })}
           className="border border-blue-300 rounded-xl px-4 py-3 mb-4 text-lg text-black"
@@ -109,7 +94,6 @@ const ApplyLeavs = () => {
         {/* Leave Type */}
          <Text className="text-base text-blue-500 mb-1">Leave Type</Text>
         <TextInput
-          placeholder="Leave Types"
            value={user.leaveType}
            onChangeText={(text) => setUser({ ...user, leaveType: text })}
           className="border border-blue-300 rounded-xl px-4 py-3 mb-4 text-lg text-black"
@@ -118,7 +102,6 @@ const ApplyLeavs = () => {
         {/* Contact Number */}
         <Text className="text-base text-blue-500 mb-1">Contact Number</Text>
         <TextInput
-          placeholder="91-8292442614"
           keyboardType="phone-pad"
           value={user.number}
            onChangeText={(text) => setUser({ ...user, number: text })}
@@ -150,7 +133,6 @@ const ApplyLeavs = () => {
         {/* Reason for Leave */}
         <Text className="text-base text-blue-500 mb-1">Reason for Leave</Text>
         <TextInput
-          placeholder="I need to take a medical leave."
           multiline
           numberOfLines={4}
           textAlignVertical="top"

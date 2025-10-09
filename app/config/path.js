@@ -1,5 +1,5 @@
 
-export const baseurl = "http://localhost:3005";
+export const baseurl = "https://geo-location-based-attendence-tracking.onrender.com";
 
 
 // `${gaseurl}/api/endpoint`

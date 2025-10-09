@@ -1,50 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ActivityIndicator, Pressable } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as Location from 'expo-location';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
-const baseurl = 'http://localhost:3005'; // Replace with your server URL
+const baseurl = 'https://geo-location-based-attendence-tracking.onrender.com'; // Replace with your server URL
 
 const LocationScreen = () => {
   const [loading, setLoading] = useState(false);
   const [isCheckedIn, setIsCheckedIn] = useState(false);
 
-  
-  useEffect(() => {
-    const checkAttendance = async () => {
-      try {
-        const userData = await AsyncStorage.getItem('userData');
-        if (!userData) return;
+  // 🔍 Always check attendance state from API
+  const checkAttendance = async () => {
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      if (!userData) return;
 
-        const { userName } = JSON.parse(userData);
+      const { userName } = JSON.parse(userData);
 
-        const now = new Date();
-        const date = now.toISOString().split('T')[0];
-        const month = now.toLocaleString('default', { month: 'long' });
-        const year = now.getFullYear().toString();
+      const now = new Date();
+      const date = now.toISOString().split('T')[0];
+      const month = now.toLocaleString('default', { month: 'long' });
+      const year = now.getFullYear().toString();
 
-        const body = { userName, month, year, date };
+      const body = { userName, month, year, date };
 
-        const response = await fetch(`${baseurl}/api/getAttendanceByUsernameWithDayMonthAndYear`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(body)
-        });
+      const response = await fetch(`${baseurl}/api/getAttendanceByUsernameWithDayMonthAndYear`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
 
-        const result = await response.json();
-        const lastStatus = result?.[0]?.status?.slice(-1)[0];
+      const result = await response.json();
 
-        if (lastStatus === 'check-in') {
-          setIsCheckedIn(true); // ✅ Reflect in UI
-        }
-      } catch (err) {
-        console.error('Error checking attendance:', err.message);
+      if (result && result.status?.length > 0) {
+        const lastStatus = result.status[result.status.length - 1]; // ✅ pick last value
+        setIsCheckedIn(lastStatus === 'check-in');
+      } else {
+        setIsCheckedIn(false);
       }
-    };
+    } catch (err) {
+      console.error('Error checking attendance:', err.message);
+    }
+  };
 
+  useEffect(() => {
     checkAttendance();
-  }, []); // Runs once on mount/refresh
+  }, []);
 
   const handleCheckIn = async () => {
     setLoading(true);
@@ -63,7 +65,7 @@ const LocationScreen = () => {
 
       const now = new Date();
       const date = now.toISOString().split('T')[0];
-      const time = now.toTimeString().split(' ')[0]; // "14:22:01"
+      const time = now.toTimeString().split(' ')[0];
       const month = now.toLocaleString('default', { month: 'long' });
       const year = now.getFullYear().toString();
 
@@ -88,7 +90,9 @@ const LocationScreen = () => {
       if (!response.ok) throw new Error(result.message || 'Check-in failed');
 
       alert('Check-in successful');
-      setIsCheckedIn(true); // ✅ Update local state
+
+      // 🔄 Refresh state from API
+      await checkAttendance();
     } catch (err) {
       alert(err.message || 'Something went wrong');
     }
@@ -104,7 +108,7 @@ const LocationScreen = () => {
         <Pressable
           onPress={handleCheckIn}
           className="w-full h-[60px] rounded-full overflow-hidden"
-          disabled={isCheckedIn} // Optional: disable after check-in
+          disabled={isCheckedIn}
         >
           <LinearGradient
             colors={isCheckedIn ? ['#4facfe', '#00f2fe'] : ['#ef4444', '#f87171']}
