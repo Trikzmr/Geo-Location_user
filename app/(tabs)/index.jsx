@@ -40,14 +40,14 @@ export default function Home() {
   }, []);
 
   return (
-    <View className="flex-1 pb-10">
-      <ScrollView className="pt-10">
+    <View className="flex-1 pb-0">
+      <ScrollView className="pt-0 bg-gray-100">
         <Profile />
         <Clender />
         <StasCardSection />
         <ActivityListSection />
       </ScrollView>
-      <LocationScreen />
+      {/* <LocationScreen /> */}
     </View>
   );
 }

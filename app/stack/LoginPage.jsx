@@ -12,9 +12,11 @@ import {
     View,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import { useRouter } from 'expo-router';
 
 const LoginPage = () => {
+  const router = useRouter();
+  
   const [showPassword, setShowPassword] = useState(false);
   const [user, setUser] = useState({
     email: '',
@@ -49,7 +51,7 @@ const LoginPage = () => {
   console.log('User:', data.user, data.token);
 
   // Navigate if needed
-  // router.replace('/home') or use navigation.navigate('Home')
+  router.replace('/(tabs)') 
 } else {
       Alert.alert('Login failed', data.message || 'Invalid credentials');
     }

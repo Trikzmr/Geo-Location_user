@@ -59,9 +59,9 @@ export default function Clender() {
   }, [amu]);
 
   return (
-    <View className="bg-white">
+    <View className="px-4 pt-4">
       {/* Month name centered */}
-      <Text className="text-lg font-bold text-center mt-4">{monthName}</Text>
+      <Text className="text-lg font-semibold text-gray-800 mb-0">Callender</Text>
 
       <ScrollView
         horizontal
