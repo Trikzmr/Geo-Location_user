@@ -48,57 +48,7 @@ const LocationScreen = () => {
     checkAttendance();
   }, []);
 
-  const handleCheckIn = async () => {
-    setLoading(true);
-    try {
-      const userData = await AsyncStorage.getItem('userData');
-      const user = JSON.parse(userData);
-      const userName = user.userName;
 
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') throw new Error('Location permission denied');
-
-      const location = await Location.getCurrentPositionAsync({});
-      const { latitude, longitude } = location.coords;
-      const locationData = await Location.reverseGeocodeAsync({ latitude, longitude });
-      const locationName = locationData[0]?.name || 'Unknown';
-
-      const now = new Date();
-      const date = now.toISOString().split('T')[0];
-      const time = now.toTimeString().split(' ')[0];
-      const month = now.toLocaleString('default', { month: 'long' });
-      const year = now.getFullYear().toString();
-
-      const body = {
-        userName,
-        date,
-        time,
-        locationLogs: [{ latitude, longitude }],
-        locationName,
-        month,
-        year
-      };
-
-      const response = await fetch(`${baseurl}/api/markAttendance`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) throw new Error(result.message || 'Check-in failed');
-
-      alert('Check-in successful');
-
-      // 🔄 Refresh state from API
-      await checkAttendance();
-    } catch (err) {
-      alert(err.message || 'Something went wrong');
-    }
-
-    setLoading(false);
-  };
 
   return (
     <View className="flex-1 justify-center items-center px-4">

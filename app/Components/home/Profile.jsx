@@ -26,7 +26,7 @@ const Profile = () => {
   }, []);
 
   return (
-    <View className="flex-row items-center justify-between p-4 pb-2 pt-8 bg-white rounded-b-3xl shadow-md">
+    <View className="flex-row items-center justify-between p-4 pb-2 pt-16 bg-white rounded-b-3xl shadow-md">
       {/* Left Section: User Info */}
       <View className="flex-row items-center">
         <Image

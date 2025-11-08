@@ -1,12 +1,74 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, Image, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, StyleSheet, ActivityIndicator, Alert } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+import { useRouter } from 'expo-router';
+import * as Location from 'expo-location';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function MarkAttendance() {
   const [permission, requestPermission] = useCameraPermissions();
   const [photo, setPhoto] = useState(null);
-  const cameraRef = useRef(null);
   const [loading, setLoading] = useState(false);
+  const [marking, setMarking] = useState(false);
+  const cameraRef = useRef(null);
+  const router = useRouter();
+
+  // ✅ Define your backend base URL here
+  const baseurl = 'http://192.168.1.106:3005';
+
+  // 📍 Handle marking attendance (location + DB update)
+  const handleCheckIn = async () => {
+    setLoading(true);
+    try {
+      const userData = await AsyncStorage.getItem('userData');
+      const user = JSON.parse(userData);
+      const userName = user.userName;
+
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') throw new Error('Location permission denied');
+
+      const location = await Location.getCurrentPositionAsync({});
+      const { latitude, longitude } = location.coords;
+      const locationData = await Location.reverseGeocodeAsync({ latitude, longitude });
+      const locationName = locationData[0]?.name || 'Unknown';
+
+      const now = new Date();
+      const date = now.toISOString().split('T')[0];
+      const time = now.toTimeString().split(' ')[0];
+      const month = now.toLocaleString('default', { month: 'long' });
+      const year = now.getFullYear().toString();
+
+      const body = {
+        userName,
+        date,
+        time,
+        locationLogs: [{ latitude, longitude }],
+        locationName,
+        month,
+        year,
+      };
+
+      const response = await fetch(`https://geo-location-based-attendence-tracking.onrender.com/api/markAttendance`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Check-in failed');
+      }
+
+      alert('Check-in successful');
+      return true;
+    } catch (err) {
+      alert(err.message || 'Something went wrong');
+      return false;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (!permission) {
@@ -39,25 +101,47 @@ export default function MarkAttendance() {
       const photoData = await cameraRef.current.takePictureAsync({ base64: true });
       setPhoto(photoData.uri);
       setLoading(false);
+    }
+  };
 
-      // Upload to backend (example)
-      const formData = new FormData();
-      formData.append('photo', {
-        uri: photoData.uri,
-        type: 'image/jpeg',
-        name: 'attendance.jpg',
+  const markAttendance = async () => {
+    if (!photo) return;
+    setMarking(true);
+
+    const formData = new FormData();
+    formData.append('File', {
+      uri: photo.startsWith('file://') ? photo : `file://${photo}`,
+      type: 'image/jpeg',
+      name: 'attendance.jpg',
+    });
+
+    try {
+      const res = await fetch(`${baseurl}/api/checkuser`, {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
       });
 
-      try {
-        const res = await fetch('https://your-backend-url.com/api/attendance', {
-          method: 'POST',
-          body: formData,
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-        console.log('Upload success:', await res.json());
-      } catch (err) {
-        console.error('Upload failed:', err);
+      const data = await res.json();
+
+      if (res.ok) {
+        if (data?.flaskResult?.match === true) {
+          const success = await handleCheckIn();
+          if (success) {
+            Alert.alert('✅ Success', 'Attendance marked successfully!');
+            router.replace('/(tabs)');
+          }
+        } else {
+          Alert.alert('❌ Face Mismatch', 'Face not recognized. Please try again.');
+        }
+      } else {
+        Alert.alert('❌ Error', data?.message || 'Failed to mark attendance.');
       }
+    } catch (err) {
+      console.error('Upload failed:', err);
+      Alert.alert('❌ Network Error', 'Unable to connect to the server.');
+    } finally {
+      setMarking(false);
     }
   };
 
@@ -67,23 +151,51 @@ export default function MarkAttendance() {
         <>
           <CameraView
             ref={cameraRef}
-            style={{ flex: 1, height: '60%' }}
+            style={{ flex: 1 }}
             facing="front"
             autofocus="on"
-            enableTorch={false}
           />
           <View style={styles.buttonContainer}>
             <TouchableOpacity onPress={takePicture} style={styles.captureButton}>
-              <Text style={styles.captureText}>{loading ? '⏳' : '📸'}</Text>
+              {loading ? (
+                <ActivityIndicator size="large" color="#000" />
+              ) : (
+                <Text style={styles.captureText}>📸</Text>
+              )}
             </TouchableOpacity>
           </View>
         </>
       ) : (
         <View style={styles.previewContainer}>
           <Image source={{ uri: photo }} style={styles.previewImage} />
-          <TouchableOpacity onPress={() => setPhoto(null)} style={styles.button}>
-            <Text style={styles.buttonText}>Retake</Text>
-          </TouchableOpacity>
+
+          <View style={styles.actionRow}>
+            <TouchableOpacity
+              onPress={() => setPhoto(null)}
+              style={[styles.button, { backgroundColor: '#555' }]}
+              disabled={marking}
+            >
+              <Text style={styles.buttonText}>Retake</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={markAttendance}
+              style={styles.button}
+              disabled={marking}
+            >
+              {marking ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.buttonText}>Mark Attendance</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+
+          {marking && (
+            <View style={styles.overlay}>
+              <ActivityIndicator size="large" color="#fff" />
+            </View>
+          )}
         </View>
       )}
     </View>
@@ -105,12 +217,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  captureText: {
-    fontSize: 30,
-  },
+  captureText: { fontSize: 30 },
   previewContainer: {
     flex: 1,
-    height: '40%',
     backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
@@ -120,8 +229,12 @@ const styles = StyleSheet.create({
     height: '70%',
     borderRadius: 12,
   },
+  actionRow: {
+    flexDirection: 'row',
+    marginTop: 25,
+    gap: 15,
+  },
   button: {
-    marginTop: 20,
     backgroundColor: '#FF6B00',
     paddingHorizontal: 20,
     paddingVertical: 10,
@@ -130,5 +243,11 @@ const styles = StyleSheet.create({
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
+  },
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
