@@ -1,15 +1,39 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Dimensions } from 'react-native';
 
 const LeaveCard = ({ data }) => {
-  const { status, count,color } = data;
+  const { status, count, color } = data;
+  const { width } = Dimensions.get('window');
+
+  // Responsive sizing (2 cards per row with spacing)
+  const cardWidth = width * 0.44; // around 44% of total width
+  const cardHeight = width * 0.35;
 
   return (
-    <View className="bg-blue-50 border border-blue-300 rounded-xl w-48 h-36 px-4 py-4 shadow-sm">
-      <Text className="text-lg font-semibold text-black">
+    <View
+      style={{
+        width: cardWidth,
+        height: cardHeight,
+        backgroundColor: `${color}20`,
+        borderColor: color,
+        borderWidth: 1,
+        borderRadius: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        justifyContent: 'space-between',
+      }}
+    >
+      <Text style={{ fontSize: 18, fontWeight: '600', color: '#000' }}>
         Leave{'\n'}{status}
       </Text>
-      <Text className="mt-3 text-3xl font-bold text-blue-500">
+      <Text
+        style={{
+          fontSize: 30,
+          fontWeight: 'bold',
+          color,
+          alignSelf: 'flex-end',
+        }}
+      >
         {count}
       </Text>
     </View>

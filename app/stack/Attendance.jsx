@@ -1,9 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet, ActivityIndicator, Alert } from 'react-native';
-import { CameraView, useCameraPermissions } from 'expo-camera';
-import { useRouter } from 'expo-router';
-import * as Location from 'expo-location';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useRef, useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+  ActivityIndicator,
+  Alert,
+} from "react-native";
+import { CameraView, useCameraPermissions } from "expo-camera";
+import { useRouter } from "expo-router";
+import * as Location from "expo-location";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function MarkAttendance() {
   const [permission, requestPermission] = useCameraPermissions();
@@ -14,28 +22,32 @@ export default function MarkAttendance() {
   const router = useRouter();
 
   // ✅ Define your backend base URL here
-  const baseurl = 'http://192.168.1.106:3005';
+  const baseurl = "https://geoserver-ph8p.onrender.com";
 
   // 📍 Handle marking attendance (location + DB update)
   const handleCheckIn = async () => {
+    console.log("Starting check-in process...");
     setLoading(true);
     try {
-      const userData = await AsyncStorage.getItem('userData');
+      const userData = await AsyncStorage.getItem("userData");
       const user = JSON.parse(userData);
       const userName = user.userName;
 
       const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') throw new Error('Location permission denied');
+      if (status !== "granted") throw new Error("Location permission denied");
 
       const location = await Location.getCurrentPositionAsync({});
       const { latitude, longitude } = location.coords;
-      const locationData = await Location.reverseGeocodeAsync({ latitude, longitude });
-      const locationName = locationData[0]?.name || 'Unknown';
+      const locationData = await Location.reverseGeocodeAsync({
+        latitude,
+        longitude,
+      });
+      const locationName = locationData[0]?.name || "Unknown";
 
       const now = new Date();
-      const date = now.toISOString().split('T')[0];
-      const time = now.toTimeString().split(' ')[0];
-      const month = now.toLocaleString('default', { month: 'long' });
+      const date = now.toISOString().split("T")[0];
+      const time = now.toTimeString().split(" ")[0];
+      const month = now.toLocaleString("default", { month: "long" });
       const year = now.getFullYear().toString();
 
       const body = {
@@ -47,23 +59,28 @@ export default function MarkAttendance() {
         month,
         year,
       };
-
-      const response = await fetch(`https://geo-location-based-attendence-tracking.onrender.com/api/markAttendance`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
-
+      console.log("Check-in data:", body);
+      const response = await fetch(
+        `https://geoserver-ph8p.onrender.com/api/markAttendance`,
+        {
+          method: "POST", 
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        },
+      );
+      console.log("Check-in request sent");
       const result = await response.json();
+      console.log(result);
+      console.log("Check-in response:", result);
 
       if (!response.ok) {
-        throw new Error(result.message || 'Check-in failed');
+        throw new Error(result.message || "Check-in failed");
       }
 
-      alert('Check-in successful');
+      alert("Check-in successful");
       return true;
     } catch (err) {
-      alert(err.message || 'Something went wrong');
+      alert(err.message || "Something went wrong");
       return false;
     } finally {
       setLoading(false);
@@ -98,7 +115,9 @@ export default function MarkAttendance() {
   const takePicture = async () => {
     if (cameraRef.current) {
       setLoading(true);
-      const photoData = await cameraRef.current.takePictureAsync({ base64: true });
+      const photoData = await cameraRef.current.takePictureAsync({
+        base64: true,
+      });
       setPhoto(photoData.uri);
       setLoading(false);
     }
@@ -109,44 +128,55 @@ export default function MarkAttendance() {
     setMarking(true);
 
     const formData = new FormData();
-    formData.append('File', {
-      uri: photo.startsWith('file://') ? photo : `file://${photo}`,
-      type: 'image/jpeg',
-      name: 'attendance.jpg',
+    formData.append("File", {
+      uri: photo.startsWith("file://") ? photo : `file://${photo}`,
+      type: "image/jpeg",
+      name: "attendance.jpg",
     });
 
     try {
-      const res = await fetch(`${baseurl}/api/checkuser`, {
-        method: 'POST',
-        body: formData,
-        credentials: 'include',
-      });
+      // const res = await fetch(`${baseurl}/api/checkuser`, {
+      //   method: 'POST',
+      //   body: formData,
+      //   credentials: 'include',
+      // });
 
-      const data = await res.json();
+      // const data = await res.json();
 
-      if (res.ok) {
-        if (data?.flaskResult?.match === true) {
-          const success = await handleCheckIn();
-          if (success) {
-            Alert.alert('✅ Success', 'Attendance marked successfully!');
-            router.replace('/(tabs)');
-          }
-        } else {
-          Alert.alert('❌ Face Mismatch', 'Face not recognized. Please try again.');
-        }
+      const success = await handleCheckIn();
+      console.log("Check-in result:", success);
+      if (success) {
+        Alert.alert("✅ Success", "Attendance marked successfully!");
+        router.replace("/(tabs)");
       } else {
-        Alert.alert('❌ Error', data?.message || 'Failed to mark attendance.');
+        Alert.alert(
+          "❌Location Error",
+        );
       }
+
+      // if (res.ok) {
+      //   if (data?.flaskResult?.match === true) {
+      //     const success = await handleCheckIn();
+      //     if (success) {
+      //       Alert.alert('✅ Success', 'Attendance marked successfully!');
+      //       router.replace('/(tabs)');
+      //     }
+      //   } else {
+      //     Alert.alert('❌ Face Mismatch', 'Face not recognized. Please try again.');
+      //   }
+      // } else {
+      //   Alert.alert('❌ Error', data?.message || 'Failed to mark attendance.');
+      // }
     } catch (err) {
-      console.error('Upload failed:', err);
-      Alert.alert('❌ Network Error', 'Unable to connect to the server.');
+      console.error("Upload failed:", err);
+      Alert.alert("❌ Network Error", "Unable to connect to the server.");
     } finally {
       setMarking(false);
     }
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#000' }}>
+    <View style={{ flex: 1, backgroundColor: "#000" }}>
       {!photo ? (
         <>
           <CameraView
@@ -156,7 +186,10 @@ export default function MarkAttendance() {
             autofocus="on"
           />
           <View style={styles.buttonContainer}>
-            <TouchableOpacity onPress={takePicture} style={styles.captureButton}>
+            <TouchableOpacity
+              onPress={takePicture}
+              style={styles.captureButton}
+            >
               {loading ? (
                 <ActivityIndicator size="large" color="#000" />
               ) : (
@@ -172,7 +205,7 @@ export default function MarkAttendance() {
           <View style={styles.actionRow}>
             <TouchableOpacity
               onPress={() => setPhoto(null)}
-              style={[styles.button, { backgroundColor: '#555' }]}
+              style={[styles.button, { backgroundColor: "#555" }]}
               disabled={marking}
             >
               <Text style={styles.buttonText}>Retake</Text>
@@ -203,51 +236,51 @@ export default function MarkAttendance() {
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  center: { flex: 1, justifyContent: "center", alignItems: "center" },
   buttonContainer: {
-    position: 'absolute',
+    position: "absolute",
     bottom: 40,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   captureButton: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
   },
   captureText: { fontSize: 30 },
   previewContainer: {
     flex: 1,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
   },
   previewImage: {
-    width: '90%',
-    height: '70%',
+    width: "90%",
+    height: "70%",
     borderRadius: 12,
   },
   actionRow: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 25,
     gap: 15,
   },
   button: {
-    backgroundColor: '#FF6B00',
+    backgroundColor: "#FF6B00",
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 8,
   },
   buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
+    color: "white",
+    fontWeight: "bold",
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

@@ -32,7 +32,7 @@ const LoginPage = () => {
 
   try {
     const response = await fetch(
-      "https://geo-location-based-attendence-tracking.onrender.com/api/login",
+      "https://geoserver-ph8p.onrender.com/api/login",
       {
         method: 'POST',
         credentials: 'include',

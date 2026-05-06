@@ -5,8 +5,8 @@ import AllLeaveSection from '../Components/leave/AllLeaveSection';
 
 export default function leave() {
   return (
-    <ScrollView className="pt-10">
-      <LeaveStatsSection/>
+    <ScrollView >
+      <LeaveStatsSection className="rounded-b-7xl"/>
       <AllLeaveSection/>
     </ScrollView>
   );

@@ -1,35 +1,39 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Alert } from 'react-native';
-import StatCards from './StatCards';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { baseurl } from '../../config/path';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
+import { useEffect, useState } from "react";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { baseurl } from "../../config/path";
+import StatCards from "./StatCards";
 
 export default function StasCardSection() {
+  const router = useRouter();
+  const [isAttendanceMarkedToday, setIsAttendanceMarkedToday] = useState(false);
+
   const defaultData = [
     {
       icon: <Icon name="sign-in" size={20} color="#3B82F6" />,
-      title: 'Check In',
-      time: 'N/A',
-      description: 'On Time',
+      title: "Check In",
+      time: "N/A",
+      description: "On Time",
     },
     {
       icon: <Icon name="sign-out" size={20} color="#3B82F6" />,
-      title: 'Check Out',
-      time: 'N/A',
-      description: 'Go Time',
+      title: "Check Out",
+      time: "N/A",
+      description: "Go Time",
     },
     {
       icon: <Icon name="coffee" size={20} color="#3B82F6" />,
-      title: 'Break',
-      time: '12:30:00',
-      description: 'Break Time',
+      title: "Break",
+      time: "12:30:00",
+      description: "Break Time",
     },
     {
       icon: <Icon name="user" size={20} color="#3B82F6" />,
-      title: 'User',
-      time: '31',
-      description: 'Working',
+      title: "User",
+      time: "31",
+      description: "Working",
     },
   ];
 
@@ -37,13 +41,13 @@ export default function StasCardSection() {
 
   const userData = async () => {
     try {
-      const userData = await AsyncStorage.getItem('userData');
+      const userData = await AsyncStorage.getItem("userData");
       const user = JSON.parse(userData);
       const userName = user.userName;
 
       const now = new Date();
-      const date = now.toISOString().split('T')[0];
-      const month = now.toLocaleString('default', { month: 'long' });
+      const date = now.toISOString().split("T")[0];
+      const month = now.toLocaleString("default", { month: "long" });
       const year = now.getFullYear().toString();
 
       const body = {
@@ -53,79 +57,88 @@ export default function StasCardSection() {
         date,
       };
 
-      const response = await fetch(`${baseurl}/api/getAttendanceByUsernameWithDayMonthAndYear`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetch(
+        `${baseurl}/api/getAttendanceByUsernameWithDayMonthAndYear`,
+        {
+          method: "POST",
+          credentials: "include",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(body),
         },
-        body: JSON.stringify(body),
-      });
+      );
       const currentYear = new Date().getFullYear();
-      const bodys={
+      const bodys = {
         year: currentYear,
-        month
-      }
+        month,
+      };
       const workingDay = await fetch(`${baseurl}/api/getCalenders`, {
-        method: 'POST',
-        credentials: 'include',
+        method: "POST",
+        credentials: "include",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(bodys),
       });
       const texts = await workingDay.json();
-      const workingDays = texts.dayCalander.filter(item => item.dayType === 1);
+      const workingDays = texts.dayCalander.filter(
+        (item) => item.dayType === 1,
+      );
       console.log(workingDays.length);
 
       const result = await response.json();
 
-      if (!response.ok) throw new Error(result.message || 'User data not found');
+      if (!response.ok)
+        throw new Error(result.message || "User data not found");
 
       // console.log(result);
 
-      const status = result.status;
-      const time = result.time;
+      const status = result.status || [];
+      const time = result.time || [];
 
-      const firstCheckInIndex = status.indexOf('check-in');
-      const lastCheckOutIndex = status.lastIndexOf('check-out');
+      const hasAttendanceToday = Array.isArray(status) && status.length > 0;
+      setIsAttendanceMarkedToday(hasAttendanceToday);
+
+      const firstCheckInIndex = status.indexOf("check-in");
+      const lastCheckOutIndex = status.lastIndexOf("check-out");
 
       const firstCheckInTime =
-        firstCheckInIndex !== -1 ? time[firstCheckInIndex] : 'N/A';
+        firstCheckInIndex !== -1 ? time[firstCheckInIndex] : "N/A";
       const lastCheckOutTime =
-        lastCheckOutIndex !== -1 ? time[lastCheckOutIndex] : 'N/A';
+        lastCheckOutIndex !== -1 ? time[lastCheckOutIndex] : "N/A";
 
       const newData = [
         {
           icon: <Icon name="sign-in" size={20} color="#3B82F6" />,
-          title: 'Check In',
+          title: "Check In",
           time: firstCheckInTime,
-          description: 'On Time',
+          description: "On Time",
         },
         {
           icon: <Icon name="sign-out" size={20} color="#3B82F6" />,
-          title: 'Check Out',
+          title: "Check Out",
           time: lastCheckOutTime,
-          description: 'Go Time',
+          description: "Go Time",
         },
         {
           icon: <Icon name="coffee" size={20} color="#3B82F6" />,
-          title: 'Break',
-          time: '12:30:00',
-          description: 'Break Time',
+          title: "Break",
+          time: "12:30:00",
+          description: "Break Time",
         },
         {
           icon: <Icon name="user" size={20} color="#3B82F6" />,
           title: userName,
           time: workingDays.length,
-          description: 'Working',
+          description: "Working",
         },
       ];
 
       setData(newData);
     } catch (error) {
-      console.error('API call failed:', error.message);
-      Alert.alert('Error', error.message || 'Could not connect to server.');
+      console.error("API call failed:", error.message);
+      Alert.alert("Error", error.message || "Could not connect to server.");
     }
   };
 
@@ -140,7 +153,23 @@ export default function StasCardSection() {
 
   return (
     <View className="px-4 pt-4">
-      <Text className="text-lg font-semibold text-gray-800 mb-4">Today Attendance</Text>
+      <Text className="text-lg font-semibold text-gray-800 mb-4">
+        Today Attendance
+      </Text>
+
+      {!isAttendanceMarkedToday && (
+        <View className="bg-white rounded-xl p-4 mb-4 border border-red-100">
+          <Text className="text-sm text-red-500 mb-2">
+            No attendance record found for today.
+          </Text>
+          <TouchableOpacity
+            onPress={() => router.push("/stack/Attendance")}
+            className="bg-blue-600 rounded-lg py-2 px-3 items-center"
+          >
+            <Text className="text-white font-semibold">Mark Attendance</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {chunkedData.map((row, rowIndex) => (
         <View key={rowIndex} className="flex-row justify-between mb-4">

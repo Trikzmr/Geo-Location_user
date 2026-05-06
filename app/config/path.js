@@ -1,6 +1,6 @@
 
-export const baseurl = "https://geo-location-based-attendence-tracking.onrender.com";
+export const baseurl = "https://geoserver-ph8p.onrender.com";
 
 
-// `${gaseurl}/api/endpoint`
+// `${baseurl}/api/endpoint`
 //import {baseurl} from './config/path'

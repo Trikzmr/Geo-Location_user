@@ -4,7 +4,7 @@ import * as Location from 'expo-location';
 import { useEffect, useState } from 'react';
 import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 
-const baseurl = 'https://geo-location-based-attendence-tracking.onrender.com'; // Replace with your server URL
+const baseurl = 'https://geoserver-ph8p.onrender.com'; // Replace with your server URL
 
 const LocationScreen = () => {
   const [loading, setLoading] = useState(false);

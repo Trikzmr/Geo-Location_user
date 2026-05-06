@@ -9,7 +9,7 @@ const HolidaySection = () => {
     try {
       const currentYear = new Date().getFullYear();
 
-      const response = await fetch('https://geo-location-based-attendence-tracking.onrender.com/api/getWeekend', {
+      const response = await fetch('https://geoserver-ph8p.onrender.com/api/getWeekend', {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
