@@ -40,14 +40,19 @@ export default function Home() {
   }, []);
 
   return (
-    <View className="flex-1 pb-0">
-      <ScrollView className="pt-0 bg-gray-100">
+    <View className="flex-1 bg-slate-50">
+      <ScrollView 
+        className="flex-1"
+        contentContainerStyle={{ paddingBottom: 60 }}
+        showsVerticalScrollIndicator={false}
+      >
         <Profile />
-        <Clender />
-        <StasCardSection />
-        <ActivityListSection />
+        <View className="px-1">
+          <Clender />
+          <StasCardSection />
+          <ActivityListSection />
+        </View>
       </ScrollView>
-      {/* <LocationScreen /> */}
     </View>
   );
 }

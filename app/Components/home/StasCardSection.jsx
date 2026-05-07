@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import { Alert, Text, TouchableOpacity, View } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { FontAwesome } from "@expo/vector-icons";
 import { baseurl } from "../../config/path";
 import StatCards from "./StatCards";
 
@@ -12,28 +12,32 @@ export default function StasCardSection() {
 
   const defaultData = [
     {
-      icon: <Icon name="sign-in" size={20} color="#3B82F6" />,
+      icon: <FontAwesome name="sign-in" size={20} color="#3B82F6" />,
+      iconColor: "#3B82F6",
       title: "Check In",
       time: "N/A",
-      description: "On Time",
+      description: "On Time Entry",
     },
     {
-      icon: <Icon name="sign-out" size={20} color="#3B82F6" />,
+      icon: <FontAwesome name="sign-out" size={20} color="#10B981" />,
+      iconColor: "#10B981",
       title: "Check Out",
       time: "N/A",
-      description: "Go Time",
+      description: "Standard Exit",
     },
     {
-      icon: <Icon name="coffee" size={20} color="#3B82F6" />,
+      icon: <FontAwesome name="coffee" size={20} color="#F59E0B" />,
+      iconColor: "#F59E0B",
       title: "Break",
       time: "12:30:00",
-      description: "Break Time",
+      description: "Daily Interval",
     },
     {
-      icon: <Icon name="user" size={20} color="#3B82F6" />,
-      title: "User",
-      time: "31",
-      description: "Working",
+      icon: <FontAwesome name="users" size={20} color="#6366F1" />,
+      iconColor: "#6366F1",
+      title: "Working Days",
+      time: "...",
+      description: "This Month",
     },
   ];
 
@@ -85,14 +89,11 @@ export default function StasCardSection() {
       const workingDays = texts.dayCalander.filter(
         (item) => item.dayType === 1,
       );
-      console.log(workingDays.length);
 
       const result = await response.json();
 
       if (!response.ok)
         throw new Error(result.message || "User data not found");
-
-      // console.log(result);
 
       const status = result.status || [];
       const time = result.time || [];
@@ -110,28 +111,32 @@ export default function StasCardSection() {
 
       const newData = [
         {
-          icon: <Icon name="sign-in" size={20} color="#3B82F6" />,
+          icon: <FontAwesome name="sign-in" size={20} color="#3B82F6" />,
+          iconColor: "#3B82F6",
           title: "Check In",
           time: firstCheckInTime,
-          description: "On Time",
+          description: "On Time Entry",
         },
         {
-          icon: <Icon name="sign-out" size={20} color="#3B82F6" />,
+          icon: <FontAwesome name="sign-out" size={20} color="#10B981" />,
+          iconColor: "#10B981",
           title: "Check Out",
           time: lastCheckOutTime,
-          description: "Go Time",
+          description: "Standard Exit",
         },
         {
-          icon: <Icon name="coffee" size={20} color="#3B82F6" />,
+          icon: <FontAwesome name="coffee" size={20} color="#F59E0B" />,
+          iconColor: "#F59E0B",
           title: "Break",
           time: "12:30:00",
-          description: "Break Time",
+          description: "Daily Interval",
         },
         {
-          icon: <Icon name="user" size={20} color="#3B82F6" />,
-          title: userName,
+          icon: <FontAwesome name="users" size={20} color="#6366F1" />,
+          iconColor: "#6366F1",
+          title: "Working Days",
           time: workingDays.length,
-          description: "Working",
+          description: "This Month",
         },
       ];
 
@@ -152,29 +157,46 @@ export default function StasCardSection() {
   }
 
   return (
-    <View className="px-4 pt-4">
-      <Text className="text-lg font-semibold text-gray-800 mb-4">
-        Today Attendance
-      </Text>
+    <View className="px-5 mt-10">
+      <View className="flex-row items-center justify-between mb-8">
+        <View className="flex-1">
+          <View className="flex-row items-center gap-2 mb-1">
+            <View className="w-1.5 h-4 rounded-full bg-blue-500" />
+            <Text className="text-lg font-black text-slate-900 tracking-tight">
+              Today's Summary
+            </Text>
+          </View>
+          <Text className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+            {isAttendanceMarkedToday ? "Status: Recorded" : "Status: Pending"}
+          </Text>
+        </View>
+      </View>
 
       {!isAttendanceMarkedToday && (
-        <View className="bg-white rounded-xl p-4 mb-4 border border-red-100">
-          <Text className="text-sm text-red-500 mb-2">
-            No attendance record found for today.
-          </Text>
-          <TouchableOpacity
-            onPress={() => router.push("/stack/Attendance")}
-            className="bg-blue-600 rounded-lg py-2 px-3 items-center"
-          >
-            <Text className="text-white font-semibold">Mark Attendance</Text>
-          </TouchableOpacity>
+        <View className="bg-white rounded-[32px] p-8 mb-8 border border-red-50 shadow-2xl shadow-red-100/50 relative overflow-hidden">
+           <View className="absolute top-0 right-0 w-32 h-32 rounded-full bg-red-50 opacity-50 -mr-10 -mt-10" />
+           <View className="flex-row items-center gap-4 relative z-10">
+              <View className="w-12 h-12 rounded-2xl bg-red-100 items-center justify-center">
+                 <FontAwesome name="exclamation-circle" size={20} color="#EF4444" />
+              </View>
+              <View className="flex-1">
+                <Text className="text-slate-900 font-black text-base tracking-tight">Missing Entry</Text>
+                <Text className="text-slate-400 text-xs font-bold mt-0.5 leading-4">Your attendance hasn't been logged yet for today.</Text>
+              </View>
+           </View>
+           <TouchableOpacity
+              onPress={() => router.push("/stack/Attendance")}
+              className="bg-blue-600 rounded-2xl py-4 items-center mt-6 shadow-lg shadow-blue-200"
+            >
+              <Text className="text-white font-black uppercase tracking-widest text-xs">Mark Presence Now</Text>
+           </TouchableOpacity>
         </View>
       )}
 
       {chunkedData.map((row, rowIndex) => (
-        <View key={rowIndex} className="flex-row justify-between mb-4">
+        <View key={rowIndex} className="flex-row justify-between mb-5">
           {row.map((item, index) => (
-            <View key={index} className="w-[48%]">
+            <View key={index} className="w-[47%]">
               <StatCards datas={item} />
             </View>
           ))}

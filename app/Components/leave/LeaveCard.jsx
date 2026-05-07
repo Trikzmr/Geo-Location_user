@@ -1,41 +1,39 @@
-import React from 'react';
-import { View, Text, Dimensions } from 'react-native';
+import { Text, View } from "react-native";
 
 const LeaveCard = ({ data }) => {
   const { status, count, color } = data;
-  const { width } = Dimensions.get('window');
-
-  // Responsive sizing (2 cards per row with spacing)
-  const cardWidth = width * 0.44; // around 44% of total width
-  const cardHeight = width * 0.35;
 
   return (
-    <View
-      style={{
-        width: cardWidth,
-        height: cardHeight,
-        backgroundColor: `${color}20`,
-        borderColor: color,
-        borderWidth: 1,
-        borderRadius: 16,
-        paddingHorizontal: 16,
-        paddingVertical: 14,
-        justifyContent: 'space-between',
-      }}
-    >
-      <Text style={{ fontSize: 18, fontWeight: '600', color: '#000' }}>
-        Leave{'\n'}{status}
-      </Text>
-      <Text
-        style={{
-          fontSize: 30,
-          fontWeight: 'bold',
-          color,
-          alignSelf: 'flex-end',
-        }}
-      >
-        {count}
-      </Text>
+    <View className="bg-slate-50 rounded-3xl p-5 border border-slate-100 min-h-[140px] flex-col justify-between">
+      <View className="flex-row items-center justify-between">
+        <View 
+          className="w-1.5 h-6 rounded-full"
+          style={{ backgroundColor: color }}
+        />
+        <View 
+          className="w-8 h-8 rounded-xl items-center justify-center"
+          style={{ backgroundColor: `${color}15` }}
+        >
+          <View 
+            className="w-2 h-2 rounded-full"
+            style={{ backgroundColor: color }}
+          />
+        </View>
+      </View>
+
+      <View className="mt-4">
+        <Text className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">
+          {status}
+        </Text>
+        <View className="flex-row items-end gap-1">
+          <Text className="text-3xl font-black text-slate-900 leading-tight">
+            {count}
+          </Text>
+          <Text className="text-[10px] font-bold text-slate-400 mb-1.5 uppercase">
+            Days
+          </Text>
+        </View>
+      </View>
     </View>
   );
 };

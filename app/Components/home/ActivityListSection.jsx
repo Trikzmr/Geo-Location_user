@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import ActivitylistItem from './ActivitylistItem';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import { FontAwesome } from "@expo/vector-icons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { baseurl } from '../../config/path'
 
@@ -47,9 +47,8 @@ export default function ActivityListSection() {
       title: status[idx],        
       time: time[idx],           
       date: date,               
-      icon: <Icon name={status[idx] === 'check-in' ? 'sign-in' : 'sign-out'} size={20} color="#2563EB" />,
     }));
-   setArr(activityData);
+    setArr(activityData);
 
   } catch (error) {
     console.error("❌ Error in userStatus:", error.message);
@@ -65,20 +64,37 @@ userStatus();
  
 
   return (
-    <View className="w-full px-4">
-      {/* Header */}
-      <View className="flex-row justify-between items-center mb-3">
-        <Text className="text-lg font-semibold text-gray-800">Your Activity</Text>
-        <TouchableOpacity activeOpacity={0.7}>
-          <Text className="text-sm text-blue-500 font-medium">View All</Text>
+    <View className="w-full px-5 mt-10">
+      <View className="flex-row items-center justify-between mb-8 px-1">
+        <View className="flex-1">
+          <View className="flex-row items-center gap-2 mb-1">
+            <View className="w-1.5 h-4 rounded-full bg-blue-500" />
+            <Text className="text-lg font-black text-slate-900 tracking-tight">
+              Recent Activity
+            </Text>
+          </View>
+          <Text className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+            Your Timeline • Today
+          </Text>
+        </View>
+        <TouchableOpacity activeOpacity={0.7} className="px-3 py-1.5 rounded-full bg-slate-50 border border-slate-100">
+          <Text className="text-[10px] font-black text-blue-500 uppercase tracking-widest">View History</Text>
         </TouchableOpacity>
       </View>
 
-      {/* List of Activities */}
-      <View className="space-y-3">
-        {arr.map((item, index) => (
-          <ActivitylistItem key={index} data={item} />
-        ))}
+      <View>
+        {arr.length > 0 ? (
+          arr.map((item, index) => (
+            <ActivitylistItem key={index} data={item} />
+          ))
+        ) : (
+          <View className="rounded-[32px] bg-white p-10 border border-slate-100 items-center shadow-lg shadow-slate-100/50">
+            <View className="w-16 h-16 rounded-full bg-slate-50 items-center justify-center mb-4">
+              <FontAwesome name="history" size={24} color="#CBD5E1" />
+            </View>
+            <Text className="text-slate-400 font-bold text-sm tracking-wide">No activities logged yet</Text>
+          </View>
+        )}
       </View>
     </View>
   );
